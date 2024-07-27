@@ -1,7 +1,7 @@
 # Writing Assessment Tool
 
 A Google Apps Script tool for assessing writing assignments based on a provided rubric.
-Ulysses Cabayao, SJ 2024
+- Ulysses Cabayao, SJ 2024
 
 ## Table of Contents
 - [Overview](#overview)
