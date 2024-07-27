@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Rubric</title>
+  <style>
+      body {
+          font-family: Arial, sans-serif;
+          line-height: 1.6;
+          color: #333;
+          max-width: 600px;
+          margin: 0 auto;
+          padding: 20px;
+          background-color: #f4f4f4;
+      }
+      h2 {
+          color: #2c3e50;
+          font-size: 24px;
+          margin-bottom: 20px;
+      }
+      h3 {
+          color: #34495e;
+          font-size: 18px;
+          margin-top: 20px;
+          margin-bottom: 10px;
+      }
+      input[type="text"], input[type="file"] {
+          width: 100%;
+          padding: 8px;
+          margin-bottom: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          box-sizing: border-box;
+          font-size: 14px;
+      }
+      button {
+          background-color: #3498db;
+          color: white;
+          border: none;
+          padding: 10px 15px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.3s;
+      }
+      button:hover {
+          background-color: #2980b9;
+      }
+      #result {
+          margin-top: 20px;
+          padding: 10px;
+          border-radius: 4px;
+          font-size: 14px;
+      }
+      .success {
+          background-color: #d4edda;
+          color: #155724;
+      }
+      .error {
+          background-color: #f8d7da;
+          color: #721c24;
+      }
+  </style>
+</head>
+<body>
+  <h2>Upload Rubric</h2>
+  
+  <h3>From Google Drive</h3>
+  <input type="text" id="driveUrl" placeholder="Enter Google Drive URL">
+  <button onclick="uploadFromDrive()">Upload from Drive</button>
+  
+  <h3>From Local Computer</h3>
+  <input type="file" id="localFile" accept=".pdf">
+  <button onclick="uploadFromLocal()">Upload Local File</button>
+  
+  <div id="result"></div>
+
+  <script>
+      function uploadFromDrive() {
+          var fileUrl = document.getElementById('driveUrl').value;
+          google.script.run
+              .withSuccessHandler(showResult)
+              .withFailureHandler(showError)
+              .uploadRubricFromDrive(fileUrl);
+      }
+
+      function uploadFromLocal() {
+          var fileInput = document.getElementById('localFile');
+          var file = fileInput.files[0];
+          if (file) {
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                  var base64Content = e.target.result.split(',')[1];
+                  google.script.run
+                      .withSuccessHandler(showResult)
+                      .withFailureHandler(showError)
+                      .uploadRubricFromLocal(base64Content);
+              };
+              reader.readAsDataURL(file);
+          } else {
+              showError('Please select a file first.');
+          }
+      }
+
+      function showResult(result) {
+          var resultElement = document.getElementById('result');
+          resultElement.innerHTML = result.message;
+          resultElement.className = result.success ? 'success' : 'error';
+      }
+
+      function showError(error) {
+          var resultElement = document.getElementById('result');
+          resultElement.innerHTML = 'Error: ' + error;
+          resultElement.className = 'error';
+      }
+  </script>
+</body>
+</html>
