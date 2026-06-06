@@ -5,115 +5,242 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Upload Rubric</title>
   <style>
-      body {
-          font-family: Arial, sans-serif;
-          line-height: 1.6;
-          color: #333;
-          max-width: 600px;
-          margin: 0 auto;
-          padding: 20px;
-          background-color: #f4f4f4;
-      }
-      h2 {
-          color: #2c3e50;
-          font-size: 24px;
-          margin-bottom: 20px;
-      }
-      h3 {
-          color: #34495e;
-          font-size: 18px;
-          margin-top: 20px;
-          margin-bottom: 10px;
-      }
-      input[type="text"], input[type="file"] {
-          width: 100%;
-          padding: 8px;
-          margin-bottom: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          box-sizing: border-box;
-          font-size: 14px;
-      }
-      button {
-          background-color: #3498db;
-          color: white;
-          border: none;
-          padding: 10px 15px;
-          border-radius: 4px;
-          cursor: pointer;
-          font-size: 14px;
-          transition: background-color 0.3s;
-      }
-      button:hover {
-          background-color: #2980b9;
-      }
-      #result {
-          margin-top: 20px;
-          padding: 10px;
-          border-radius: 4px;
-          font-size: 14px;
-      }
-      .success {
-          background-color: #d4edda;
-          color: #155724;
-      }
-      .error {
-          background-color: #f8d7da;
-          color: #721c24;
-      }
+    * { box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 480px;
+      margin: 0 auto;
+      padding: 24px;
+      background: #fff;
+    }
+    h2 {
+      color: #1a1a2e;
+      font-size: 22px;
+      margin: 0 0 20px 0;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #eef0f5;
+    }
+    h3 {
+      color: #2c3e50;
+      font-size: 15px;
+      margin: 20px 0 8px 0;
+      font-weight: 600;
+    }
+    .section {
+      background: #f8f9fc;
+      border-radius: 8px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      border: 1.5px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.12);
+    }
+    input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+    button {
+      background-color: #3498db;
+      color: white;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.2s;
+      width: 100%;
+    }
+    button:hover {
+      background-color: #2980b9;
+    }
+    button:disabled {
+      background-color: #a0c4e8;
+      cursor: not-allowed;
+    }
+    .btn-secondary {
+      background-color: #e74c3c;
+      font-size: 12px;
+      padding: 6px 12px;
+      width: auto;
+    }
+    .btn-secondary:hover {
+      background-color: #c0392b;
+    }
+    #result {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      display: none;
+    }
+    #result.success {
+      display: block;
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+    }
+    #result.error {
+      display: block;
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+    .loader {
+      display: none;
+      text-align: center;
+      margin: 8px 0;
+      font-size: 13px;
+      color: #6b7280;
+    }
+    .loader.active {
+      display: block;
+    }
+    .loader::after {
+      content: ' ⏳';
+      animation: pulse 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .info {
+      font-size: 12px;
+      color: #9ca3af;
+      margin-top: 20px;
+      text-align: center;
+      border-top: 1px solid #eef0f5;
+      padding-top: 12px;
+    }
   </style>
 </head>
 <body>
-  <h2>Upload Rubric</h2>
-  
-  <h3>From Google Drive</h3>
-  <input type="text" id="driveUrl" placeholder="Enter Google Drive URL">
-  <button onclick="uploadFromDrive()">Upload from Drive</button>
-  
-  <h3>From Local Computer</h3>
-  <input type="file" id="localFile" accept=".pdf">
-  <button onclick="uploadFromLocal()">Upload Local File</button>
-  
+  <h2>📋 Upload Rubric</h2>
+
+  <div class="section">
+    <h3>🔗 From Google Drive</h3>
+    <input type="text" id="driveUrl" placeholder="Paste Google Drive link (e.g., https://drive.google.com/file/d/...)" />
+    <button id="driveBtn" onclick="uploadFromDrive()">Upload from Drive</button>
+  </div>
+
+  <div class="section">
+    <h3>📁 From Local Computer</h3>
+    <input type="file" id="localFile" accept=".pdf" />
+    <button id="localBtn" onclick="uploadFromLocal()">Upload Local File</button>
+  </div>
+
   <div id="result"></div>
+  <div id="loader" class="loader">Processing</div>
+
+  <div class="info">
+    <button class="btn-secondary" onclick="clearRubric()">🗑️ Clear Stored Rubric</button>
+  </div>
 
   <script>
-      function uploadFromDrive() {
-          var fileUrl = document.getElementById('driveUrl').value;
-          google.script.run
-              .withSuccessHandler(showResult)
-              .withFailureHandler(showError)
-              .uploadRubricFromDrive(fileUrl);
+    function setLoading(isLoading) {
+      document.getElementById('driveBtn').disabled = isLoading;
+      document.getElementById('localBtn').disabled = isLoading;
+      document.getElementById('driveUrl').disabled = isLoading;
+      document.getElementById('localFile').disabled = isLoading;
+      document.getElementById('loader').className = 'loader' + (isLoading ? ' active' : '');
+    }
+
+    function uploadFromDrive() {
+      var fileUrl = document.getElementById('driveUrl').value.trim();
+      var resultEl = document.getElementById('result');
+      resultEl.style.display = 'none';
+
+      if (!fileUrl) {
+        showResult({ success: false, message: 'Please enter a Google Drive URL.' });
+        return;
       }
 
-      function uploadFromLocal() {
-          var fileInput = document.getElementById('localFile');
-          var file = fileInput.files[0];
-          if (file) {
-              var reader = new FileReader();
-              reader.onload = function(e) {
-                  var base64Content = e.target.result.split(',')[1];
-                  google.script.run
-                      .withSuccessHandler(showResult)
-                      .withFailureHandler(showError)
-                      .uploadRubricFromLocal(base64Content);
-              };
-              reader.readAsDataURL(file);
-          } else {
-              showError('Please select a file first.');
-          }
+      // Basic URL validation
+      if (!fileUrl.includes('drive.google.com') && !fileUrl.includes('docs.google.com')) {
+        showResult({ success: false, message: 'Not a valid Google Drive or Google Docs URL.' });
+        return;
       }
 
-      function showResult(result) {
-          var resultElement = document.getElementById('result');
-          resultElement.innerHTML = result.message;
-          resultElement.className = result.success ? 'success' : 'error';
+      setLoading(true);
+      google.script.run
+        .withSuccessHandler(function(result) {
+          setLoading(false);
+          showResult(result);
+        })
+        .withFailureHandler(function(error) {
+          setLoading(false);
+          showResult({ success: false, message: 'Error: ' + error });
+        })
+        .uploadRubricFromDrive(fileUrl);
+    }
+
+    function uploadFromLocal() {
+      var fileInput = document.getElementById('localFile');
+      var resultEl = document.getElementById('result');
+      resultEl.style.display = 'none';
+
+      if (!fileInput.files || fileInput.files.length === 0) {
+        showResult({ success: false, message: 'Please select a PDF file first.' });
+        return;
       }
 
-      function showError(error) {
-          var resultElement = document.getElementById('result');
-          resultElement.innerHTML = 'Error: ' + error;
-          resultElement.className = 'error';
+      var file = fileInput.files[0];
+      if (file.type !== 'application/pdf' && !file.name.toLowerCase().endsWith('.pdf')) {
+        showResult({ success: false, message: 'Only PDF files are supported. Please select a .pdf file.' });
+        return;
       }
+
+      setLoading(true);
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        var base64Content = e.target.result.split(',')[1];
+        google.script.run
+          .withSuccessHandler(function(result) {
+            setLoading(false);
+            showResult(result);
+          })
+          .withFailureHandler(function(error) {
+            setLoading(false);
+            showResult({ success: false, message: 'Error: ' + error });
+          })
+          .uploadRubricFromLocal(base64Content);
+      };
+      reader.onerror = function() {
+        setLoading(false);
+        showResult({ success: false, message: 'Failed to read file.' });
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearRubric() {
+      google.script.run
+        .withSuccessHandler(function() {
+          showResult({ success: true, message: 'Stored rubric cleared.' });
+        })
+        .clearRubric();
+    }
+
+    function showResult(result) {
+      var el = document.getElementById('result');
+      el.textContent = result.message;
+      el.className = result.success ? 'success' : 'error';
+      el.style.display = 'block';
+    }
   </script>
 </body>
 </html>
